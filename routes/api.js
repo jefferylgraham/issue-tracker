@@ -25,13 +25,21 @@ module.exports = function (app) {
     
     .post(function (req, res){
       var project = req.params.project;
-      res.json({
-        issue_title: req.body.issue_title,
-        issue_text: req.body.issue_text,
-        created_by: req.body.created_by,
-        assigned_to: req.body.assigned_to,
-        status_text: req.body.status_text,
-      });
+      var issue_title = req.body.issue_title;
+      var issue_text = req.body.issue_text;
+      var created_by = req.body.created_by;
+      var assigned_to = req.body.assigned_to || '';
+      var status_text = req.body.status_text  || '';
+    
+      if (issue_title && issue_text && created_by) {
+        res.json({
+          issue_title: issue_title,
+          issue_text: issue_text,
+          created_by: created_by,
+          assigned_to: assigned_to,
+          status_text: status_text,
+        });
+      }
     })
     
     .put(function (req, res){
