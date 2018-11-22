@@ -40,6 +40,9 @@ module.exports = function (app) {
           status_text: status_text,
         });
       }
+      else {
+        res.send('Missing required fields');
+      }
     })
     
     .put(function (req, res){
