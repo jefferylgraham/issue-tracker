@@ -12,9 +12,19 @@ var expect = require('chai').expect;
 var MongoClient = require('mongodb');
 var ObjectId = require('mongodb').ObjectID;
 
-const CONNECTION_STRING = process.env.DB; //MongoClient.connect(CONNECTION_STRING, function(err, db) {});
+const CONNECTION_STRING = process.env.DB; 
+
+var db;
 
 module.exports = function (app) {
+  MongoClient.connect(CONNECTION_STRING, function(err, database) {
+    if (err) {
+      return console.log(err);
+    }
+    
+    db = database;
+    
+  });
 
   app.route('/api/issues/:project')
   
@@ -32,13 +42,18 @@ module.exports = function (app) {
       var status_text = req.body.status_text  || '';
     
       if (issue_title && issue_text && created_by) {
-        res.json({
-          issue_title: issue_title,
-          issue_text: issue_text,
-          created_by: created_by,
-          assigned_to: assigned_to,
-          status_text: status_text,
-        });
+        db.collection('issue-tracker-db').save(req.body, (err, result) => {
+          if (err) {
+            return console.log(err);
+          }
+          return res.json({
+            issue_title: issue_title,
+            issue_text: issue_text,
+            created_by: created_by,
+            assigned_to: assigned_to,
+            status_text: status_text
+          });
+        })
       }
       else {
         res.send('Missing required fields');
