@@ -42,6 +42,10 @@ module.exports = function (app) {
       var status_text = req.body.status_text  || '';
     
       if (issue_title && issue_text && created_by) {
+        req.body.created_on = (new Date()).toString();
+        req.body.updated_on = (new Date()).toString();
+        req.body.open = true;
+        
         db.collection('issue-tracker-db').save(req.body, (err, result) => {
           if (err) {
             return console.log(err);
@@ -51,7 +55,10 @@ module.exports = function (app) {
             issue_text: issue_text,
             created_by: created_by,
             assigned_to: assigned_to,
-            status_text: status_text
+            status_text: status_text,
+            created_on: req.body.created_on,
+            updated_on: req.body.updated_on,
+            open: req.body.open
           });
         })
       }
