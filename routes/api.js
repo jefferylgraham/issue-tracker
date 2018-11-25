@@ -81,20 +81,28 @@ module.exports = function (app) {
           toBeUpdated[key] = inputs[key];
         }
       }
-      toBeUpdated.updated_on = new Date().toString();
       delete toBeUpdated._id;
     
+      var size = Object.keys(toBeUpdated).length;
+      
+      if (size == 0) {
+        return res.send('no updated field sent');
+      }
+    
+      
       var o_id = new ObjectId(id);
   
       if (o_id) {
+        toBeUpdated.updated_on = new Date().toString();
         db.collection('issue-tracker-db').update({_id: o_id},  {$set: toBeUpdated}, function(err, result) {
           if (err) {
             console.log(err);
           }
+          return res.send('successfully updated');
         });
       }
       else {
-        res.send('could not update ' + o_id);
+        return res.send('could not update ' + o_id);
       }
     })
     
