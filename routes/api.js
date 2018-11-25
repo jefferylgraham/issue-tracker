@@ -69,7 +69,26 @@ module.exports = function (app) {
     
     .put(function (req, res){
       var project = req.params.project;
+      var id = req.body._id;
+      var issue_title = req.body.issue_title;
+      var issue_text = req.body.issue_text;
+      var created_by = req.body.created_by;
+      var assigned_to = req.body.assigned_to;
+      var status_text = req.body.status_text;
+    
+      var o_id = new ObjectId(id);
+      console.log(req.body);
       
+      if (o_id) {
+        db.collection('issue-tracker-db').update({_id: o_id},  {$set: {issue_title: 'updated'}}, function(err, result) {
+          if (err) {
+            console.log(err);
+          }
+        });
+      }
+      else {
+        res.send('could not update ' + o_id);
+      }
     })
     
     .delete(function (req, res){
