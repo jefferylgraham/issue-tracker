@@ -112,6 +112,22 @@ module.exports = function (app) {
     
     .delete(function (req, res){
       var project = req.params.project;
+      var id = req.body._id;
+    
+      if (id == '') {
+        res.send('_id error');
+      }
+    
+      var o_id = new ObjectId(id);
+    
+      db.collection('issue_tracker-db').deleteOne({_id: o_id}, function(err, result) {
+        if(err) {
+          res.json({failed: 'could not delete '+ o_id});
+        }
+        else {
+          res.json({success: 'deleted '+ o_id});
+        }
+      })
       
     });
     
