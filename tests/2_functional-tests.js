@@ -78,15 +78,45 @@ suite('Functional Tests', function() {
     suite('PUT /api/issues/{project} => text', function() {
       
       test('No body', function(done) {
-        
+        chai.request(server)
+         .put('/api/issues/test')
+         .send({
+            _id: '5bfb4d1c676f2315eb769f1a'
+          })
+          .end(function(err, res) {
+          assert.equal(res.status, 200);
+          assert.equal(res.text, 'no updated field sent')
+          done();
+        })
       });
       
       test('One field to update', function(done) {
-        
+        chai.request(server)
+          .put('/api/issues/test')
+          .send({
+            _id: '5bfb4d1c676f2315eb769f1a',
+            issue_title: 'Changed title'
+          })
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'successfully updated');     
+            done();
+          })
       });
       
       test('Multiple fields to update', function(done) {
-        
+        chai.request(server)
+          .put('/api/issues/test')
+          .send({
+            _id: '5bfb4d1c676f2315eb769f1a',
+            issue_title: 'Changed title',
+            issue_text: 'Changed text'
+          })
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'successfully updated');
+            done();
+          })
       });
       
     });
@@ -114,11 +144,31 @@ suite('Functional Tests', function() {
       });
       
       test('One filter', function(done) {
-        
+        chai.request(server)
+          .get('/api/issues/test')
+          .query({assigned_to: 'Jeffery'})
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.propertyVal(res.body[0], 'assigned_to', 'Jeffery');
+            done();
+          })
       });
       
       test('Multiple filters (test for multiple fields you know will be in the db for a return)', function(done) {
-        
+        chai.request(server)
+          .get('/api/issues/test')
+          .query({
+            issue_title: 'Jeffery',
+            issue_text: 'Lemar',
+            created_by: 'Graham'
+          })
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.propertyVal(res.body[0], 'issue_title', 'Jeffery');
+            assert.propertyVal(res.body[0], 'issue_text', 'Lemar');
+            assert.propertyVal(res.body[0], 'created_by', 'Graham');
+            done();
+          })
       });
       
     });
@@ -126,10 +176,28 @@ suite('Functional Tests', function() {
     suite('DELETE /api/issues/{project} => text', function() {
       
       test('No _id', function(done) {
+        chai.request(server)
+          .delete('/api/issues/test')
+          .send({
+            _id: ''
+          })
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.equal(res.text, '_id error');
+            done();
+        })
         
       });
       
       test('Valid _id', function(done) {
+        chai.request(server)
+          .delete('/api/issues/test')
+          .send({_id: '5bfb4d1c676f2315eb769f1a'})
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.propertyVal(res.body, 'success', 'deleted 5bfb4d1c676f2315eb769f1a');
+            done();
+          })
         
       });
       
