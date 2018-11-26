@@ -30,7 +30,14 @@ module.exports = function (app) {
   
     .get(function (req, res){
       var project = req.params.project;
-      
+      db.collection('issue-tracker-db').find().toArray( function(err, results) {
+        if (err) {
+          console.log(err);
+        }
+        else {
+          res.json(results);
+        }
+      });      
     })
     
     .post(function (req, res){
@@ -92,18 +99,14 @@ module.exports = function (app) {
       
       var o_id = new ObjectId(id);
   
-      if (o_id) {
-        toBeUpdated.updated_on = new Date().toString();
-        db.collection('issue-tracker-db').update({_id: o_id},  {$set: toBeUpdated}, function(err, result) {
-          if (err) {
-            console.log(err);
-          }
-          return res.send('successfully updated');
-        });
-      }
-      else {
-        return res.send('could not update ' + o_id);
-      }
+      toBeUpdated.updated_on = new Date().toString();
+      db.collection('issue-tracker-db').update({_id: o_id},  {$set: toBeUpdated}, function(err, result) {
+        if (err) {
+          return res.send('could not update ' + o_id);
+        }
+        return res.send('successfully updated');
+      });
+      
     })
     
     .delete(function (req, res){
