@@ -30,7 +30,8 @@ module.exports = function (app) {
   
     .get(function (req, res){
       var project = req.params.project;
-      db.collection('issue-tracker-db').find().toArray( function(err, results) {
+      var filter = req.query;
+      db.collection('issue-tracker-db').find(filter).toArray( function(err, results) {
         if (err) {
           console.log(err);
         }

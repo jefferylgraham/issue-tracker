@@ -81,7 +81,7 @@ suite('Functional Tests', function() {
         chai.request(server)
          .put('/api/issues/test')
          .send({
-            _id: '5bf9ff8d40be8f0061e76cd5'
+            _id: '5bfb4d1c676f2315eb769f1a'
           })
           .end(function(err, res) {
           assert.equal(res.status, 200);
@@ -94,7 +94,7 @@ suite('Functional Tests', function() {
         chai.request(server)
           .put('/api/issues/test')
           .send({
-            _id: '5bf9ff8d40be8f0061e76cd5',
+            _id: '5bfb4d1c676f2315eb769f1a',
             issue_title: 'Changed title'
           })
           .end(function(err, res) {
@@ -108,7 +108,7 @@ suite('Functional Tests', function() {
         chai.request(server)
           .put('/api/issues/test')
           .send({
-            _id: '5bf9ff8d40be8f0061e76cd5',
+            _id: '5bfb4d1c676f2315eb769f1a',
             issue_title: 'Changed title',
             issue_text: 'Changed text'
           })
@@ -144,11 +144,31 @@ suite('Functional Tests', function() {
       });
       
       test('One filter', function(done) {
-        
+        chai.request(server)
+          .get('/api/issues/test')
+          .query({assigned_to: 'Jeffery'})
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.propertyVal(res.body[0], 'assigned_to', 'Jeffery');
+            done();
+          })
       });
       
       test('Multiple filters (test for multiple fields you know will be in the db for a return)', function(done) {
-        
+        chai.request(server)
+          .get('/api/issues/test')
+          .query({
+            issue_title: 'Jeffery',
+            issue_text: 'Lemar',
+            created_by: 'Graham'
+          })
+          .end(function(err, res) {
+            assert.equal(res.status, 200);
+            assert.propertyVal(res.body[0], 'issue_title', 'Jeffery');
+            assert.propertyVal(res.body[0], 'issue_text', 'Lemar');
+            assert.propertyVal(res.body[0], 'created_by', 'Graham');
+            done();
+          })
       });
       
     });
